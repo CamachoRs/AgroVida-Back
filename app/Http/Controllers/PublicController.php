@@ -43,25 +43,25 @@ class PublicController extends Controller
             $userExists = UserModel::where('email', $userData['email'])->first();
             if($userExists){
                 if(!$userExists->status){
+                    $establishmentExists = EstablishmentModel::where('userId', $userExists->id)->first();
+                    $establishmentExists->update([
+                        'nameEstate' => $establishmentData['nameEstate'],
+                        'sidewalk' => $establishmentData['sidewalk'],
+                        'municipality' => $establishmentData['municipality']
+                    ]);
+
                     $userExists->update([
+                        'establishmentId' => $establishmentExists->id,
                         'nameUser' => $userData['nameUser'],
                         'email' => $userData['email'],
                         'password' => $userData['password'],
                         'phoneNumber' => $userData['phoneNumber']
                     ]);
                     
-                    $establishmentExists = EstablishmentModel::where('userId', $userExists->id)->first();
-                    $establishmentExists->update([
-                        'nameEstate' => $establishmentData['nameEstate'],
-                        'sidewalk' => $establishmentData['sidewalk'],
-                        'municipality' => $establishmentData['municipality'],
-                        'userId' => $userExists->id
-                    ]);
-                    
                     Mail::to($userExists['email'])->queue(new WelcomeEmail($userExists, Crypt::encryptString($userExists->phoneNumber)));
                     DB::commit();
                     return response()->json([
-                        'message' => '¡Todo listo! El usuario y la finca se han creado correctamente',
+                        'message' => '¡¡Todo listo! Revisa tu correo electrónico para activar tu cuenta y acceder a la finca',
                         'prueba'=>$phoneNumber
                     ], 201);
                 } else {
@@ -70,7 +70,14 @@ class PublicController extends Controller
                     ], 400);
                 };
             } else {
+                $establishment = EstablishmentModel::create([
+                    'nameEstate' => $establishmentData['nameEstate'],
+                    'sidewalk' => $establishmentData['sidewalk'],
+                    'municipality' => $establishmentData['municipality']
+                ]);
+
                 $user = UserModel::create([
+                    'establishmentId' => $establishment->id,
                     'nameUser' => $userData['nameUser'],
                     'email' => $userData['email'],
                     'password' => $userData['password'],
@@ -79,17 +86,10 @@ class PublicController extends Controller
                     'role' => 'dueño'
                 ]);
 
-                $establishment = EstablishmentModel::create([
-                    'nameEstate' => $establishmentData['nameEstate'],
-                    'sidewalk' => $establishmentData['sidewalk'],
-                    'municipality' => $establishmentData['municipality'],
-                    'userId' => $user->id
-                ]);
-                
                 Mail::to($user['email'])->queue(new WelcomeEmail($user, Crypt::encryptString($user->phoneNumber)));
                 DB::commit();
                 return response()->json([
-                    'message' => '¡Todo listo! El usuario y la finca se han creado correctamente'
+                    'message' => '¡Todo listo! Revisa tu correo electrónico para activar tu cuenta y acceder a la finca.'
                 ], 201);
             };
         } catch (\Throwable $th) {
@@ -158,12 +158,6 @@ class PublicController extends Controller
                 'error' => $th->getMessage()
             ], 500);
         };
-    }
-
-    public function logout()
-    {
-        auth()->logout();
-        return response()->json(['message' => 'Sesión cerrada correctamente']);
     }
 
     public function recover(Request $request)

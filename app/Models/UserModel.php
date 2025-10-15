@@ -17,6 +17,7 @@ class UserModel extends Authenticatable implements JWTSubject
     protected $table = 'users';
 
     protected $fillable = [
+        'establishmentId',
         'nameUser',
         'email',
         'password',
@@ -25,13 +26,13 @@ class UserModel extends Authenticatable implements JWTSubject
         'role'
     ];
 
-    protected $hidden=[
+    protected $hidden = [
         'password'
     ];
 
-    public function establishments()
+    public function establishment()
     {
-        return $this->hasMany(EstablishmentModel::class);
+        return $this->belongsTo(EstablishmentModel::class);
     }
 
     public function getJWTIdentifier()
@@ -43,6 +44,7 @@ class UserModel extends Authenticatable implements JWTSubject
     {
         return [
             'role' => $this->role,
+            'establishment' => $this->establishmentId
         ];
     }
 

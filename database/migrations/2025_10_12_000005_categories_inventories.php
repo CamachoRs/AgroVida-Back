@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('categories_inventories', function (Blueprint $table) {
             $table->id();
-            $table->string('nameUser', 50);
-            $table->string('email', 100)->unique();
-            $table->string('password');
-            $table->string('phoneNumber', 10)->unique();
-            $table->boolean('status')->default(false);
-            $table->enum('role', ['dueño', 'empleado', 'encargado']);
+            $table->foreignId('inventoryId')->constrained('inventories')->onDelete('cascade');
+            $table->foreignId('categoryId')->constrained('categories')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('categories_inventories');
     }
 };

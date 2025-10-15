@@ -10,17 +10,21 @@ class EstablishmentModel extends Model
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
 
-    protected $table = 'establishment';
+    protected $table = 'establishments';
 
     protected $fillable = [
         'nameEstate',
         'sidewalk',
-        'municipality',
-        'userId'
+        'municipality'
     ];
 
     public function user()
     {
-        return $this->belongsTo(UserModel::class);
+        return $this->hasMany(UserModel::class);
+    }
+
+    public function inventory()
+    {
+        return $this->hasMany(InventoryModel::class);
     }
 }
