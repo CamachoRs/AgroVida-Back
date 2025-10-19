@@ -290,5 +290,11 @@ return [
         'establishment.nameEstate' => 'nombre de la finca',
         'establishment.sidewalk'   => 'vereda',
         'establishment.municipality' => 'municipio',
+        'inventory.nameItem' => 'nombre del producto',
+        'inventory.quantity' => 'cantidad',
+        'inventory.unitMeasurement' => 'unidad de medida',
+        'inventory.expiryDate' => 'fecha de vencimiento',
+        'inventory.supplierName' => 'nombre del proveedor',
+        'inventory.categoryId' => 'categoría',
     ],
 ];

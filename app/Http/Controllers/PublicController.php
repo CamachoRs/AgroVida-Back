@@ -43,7 +43,7 @@ class PublicController extends Controller
             $userExists = UserModel::where('email', $userData['email'])->first();
             if($userExists){
                 if(!$userExists->status){
-                    $establishmentExists = EstablishmentModel::where('userId', $userExists->id)->first();
+                    $establishmentExists = EstablishmentModel::where('id', $userExists->establishmentId)->first();
                     $establishmentExists->update([
                         'nameEstate' => $establishmentData['nameEstate'],
                         'sidewalk' => $establishmentData['sidewalk'],
@@ -61,12 +61,11 @@ class PublicController extends Controller
                     Mail::to($userExists['email'])->queue(new WelcomeEmail($userExists, Crypt::encryptString($userExists->phoneNumber)));
                     DB::commit();
                     return response()->json([
-                        'message' => '¡¡Todo listo! Revisa tu correo electrónico para activar tu cuenta y acceder a la finca',
-                        'prueba'=>$phoneNumber
+                        'message' => '¡Todo listo! Revisa tu correo electrónico para activar tu cuenta y acceder a la finca'
                     ], 201);
                 } else {
                     return response()->json([
-                        'message' => 'Este usuario ya está activado y registrado.'
+                        'message' => 'Este usuario ya está activado y registrado'
                     ], 400);
                 };
             } else {
@@ -89,7 +88,7 @@ class PublicController extends Controller
                 Mail::to($user['email'])->queue(new WelcomeEmail($user, Crypt::encryptString($user->phoneNumber)));
                 DB::commit();
                 return response()->json([
-                    'message' => '¡Todo listo! Revisa tu correo electrónico para activar tu cuenta y acceder a la finca.'
+                    'message' => '¡Todo listo! Revisa tu correo electrónico para activar tu cuenta y acceder a la finca'
                 ], 201);
             };
         } catch (\Throwable $th) {
@@ -155,7 +154,8 @@ class PublicController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => 'Hubo un error al procesar la solicitud',
-                'error' => $th->getMessage()
+                'error' => $th->getMessage(),
+                'prueba'=>$user
             ], 500);
         };
     }

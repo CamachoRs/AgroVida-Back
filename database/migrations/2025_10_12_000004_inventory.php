@@ -21,7 +21,6 @@ return new class extends Migration
             $table->timestamp('entryDate');
             $table->timestamp('expiryDate')->nullable();
             $table->string('supplierName', 50);
-            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

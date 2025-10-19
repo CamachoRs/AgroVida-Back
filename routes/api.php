@@ -5,9 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\PrivateController;
 use App\Http\Controllers\InventoryController;
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\AuthController;
-
+use App\Http\Controllers\CategoryController;
+use App\Http\Middleware\RoleMiddleware;
 
 Route::prefix('')->group(function () {
     Route::post('/register', [PublicController::class, 'store']); 
@@ -16,10 +15,16 @@ Route::prefix('')->group(function () {
 });
 
 Route::group([
-    'middleware' => 'api'
+    'middleware' => [
+        'api',
+        RoleMiddleware::class
+    ]
 ], function ($router) {
+    Route::get('/category', [CategoryController::class, 'index']);
     Route::get('/inventory', [InventoryController::class, 'index']);
-
+    Route::post('/inventory', [InventoryController::class, 'store']);
+    Route::put('/inventory/{id}', [InventoryController::class, 'update']);
+    Route::delete('/inventory/{id}', [InventoryController::class, 'delete']);
 
     Route::post('/logout', [PrivateController::class, 'logout']);
     Route::post('/refresh', [PrivateController::class, 'refresh']);
