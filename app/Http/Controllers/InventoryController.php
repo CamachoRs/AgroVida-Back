@@ -115,7 +115,10 @@ class InventoryController extends Controller
             $inventoryData = $request->input('inventory');
             $payLoad = JWTAuth::parseToken()->getPayload();
             $establishmentId = $payLoad->get('establishment');
-            $updateInventory = InventoryModel::where('id', $id)->first();
+            $updateInventory = InventoryModel::where('id', $id)
+                ->where('status', true)
+                ->first();
+                
             $updateInventory->update([
                 'establishmentId' => $establishmentId,
                 'categoryId' => $inventoryData['categoryId'],
