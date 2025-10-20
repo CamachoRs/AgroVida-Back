@@ -22,7 +22,6 @@ class InventoryModel extends Model
         'entryDate',
         'expiryDate',
         'supplierName',
-        'status'
     ];
 
     public function establishment()

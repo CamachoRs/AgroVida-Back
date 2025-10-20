@@ -15,6 +15,6 @@ class CategoryController extends Controller
         return response()->json([
             'message'=>'Categorías recuperadas exitosamente',
             'data'=>$categories
-        ]);
+        ], 200);
     }
 }

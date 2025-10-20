@@ -21,7 +21,6 @@ class InventoryController extends Controller
                     $query->select('id', 'nameCategory', 'description')->where('status', true);
                 }])
                 ->where('establishmentId', $establishmentId)
-                ->where('status', true)
                 ->get();
             
             if($inventory->isEmpty()){
@@ -33,7 +32,7 @@ class InventoryController extends Controller
             return response()->json([
                 'message'=>'Inventarios recuperados exitosamente',
                 'data'=>$inventory
-            ]);
+            ], 200);
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => 'Hubo un error al procesar la solicitud',
@@ -73,8 +72,7 @@ class InventoryController extends Controller
                 'unitMeasurement' => $inventoryData['unitMeasurement'],
                 'entryDate' => Carbon::today(),
                 'expiryDate' => $inventoryData['expiryDate'],
-                'supplierName' => $inventoryData['supplierName'],
-                'status' => true
+                'supplierName' => $inventoryData['supplierName']
             ]);
 
             DB::commit();
@@ -116,7 +114,6 @@ class InventoryController extends Controller
             $payLoad = JWTAuth::parseToken()->getPayload();
             $establishmentId = $payLoad->get('establishment');
             $updateInventory = InventoryModel::where('id', $id)
-                ->where('status', true)
                 ->first();
                 
             $updateInventory->update([

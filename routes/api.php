@@ -7,6 +7,7 @@ use App\Http\Controllers\PrivateController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\EmployController;
 use App\Http\Middleware\RoleMiddleware;
 
 Route::prefix('')->group(function () {
@@ -29,6 +30,10 @@ Route::group([
     Route::delete('/inventory/{id}', [InventoryController::class, 'delete']);
     Route::post('/profile', [UserController::class, 'show']);
     Route::put('/profile', [UserController::class, 'update']);
-
+    Route::get('/employees', [EmployController::class, 'index']);
+    Route::post('/employ', [EmployController::class, 'store']);
+    Route::put('/employ/{id}', [EmployController::class, 'update']);
+    Route::delete('/employ/{id}', [EmployController::class, 'delete']);
+    
     Route::post('/refresh', [PrivateController::class, 'refresh']);
 });

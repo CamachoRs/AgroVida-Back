@@ -42,7 +42,7 @@ class PrivateController extends Controller
                     'access_token' => $newToken,
                     'token_type' => 'bearer',
                     'expires_in' => auth()->factory()->getTTL() * 60
-                ]);
+                ], 200);
             } catch (TokenBlacklistedException $e) {
                 return response()->json([
                     'message' => 'El token ha sido revocado. Por favor inicia sesión nuevamente'
