@@ -6,21 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 
-class CategoryModel extends Model
+class AnimalCategoryModel extends Model
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    protected $table = 'categories';
+    protected $table = 'animalCategories';
 
     protected $fillable = [
-        'nameCategory',
+        'name',
         'description',
         'status'
     ];
 
-    public function inventory()
+    public function news()
     {
-        return $this->hasMany(InventoryModel::class);
+        return $this->belongsToMany(NewsModel::class, 'newsAnimalCategories', 'categoryAnimalId', 'newId');
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmployController;
+use App\Http\Controllers\NewsController;
 use App\Http\Middleware\RoleMiddleware;
 
 Route::prefix('')->group(function () {
@@ -23,17 +24,22 @@ Route::group([
     ]
 ], function ($router) {
     Route::get('/logout', [PrivateController::class, 'logout']);
-    Route::get('/category', [CategoryController::class, 'index']);
+    Route::get('/categoryProduct', [CategoryController::class, 'indexProduct']);
+    Route::get('/categoryAnimal', [CategoryController::class, 'indexAnimal']);
     Route::get('/inventory', [InventoryController::class, 'index']);
     Route::post('/inventory', [InventoryController::class, 'store']);
     Route::put('/inventory/{id}', [InventoryController::class, 'update']);
     Route::delete('/inventory/{id}', [InventoryController::class, 'delete']);
-    Route::post('/profile', [UserController::class, 'show']);
+    Route::get('/profile', [UserController::class, 'show']);
     Route::put('/profile', [UserController::class, 'update']);
     Route::get('/employees', [EmployController::class, 'index']);
     Route::post('/employ', [EmployController::class, 'store']);
     Route::put('/employ/{id}', [EmployController::class, 'update']);
     Route::delete('/employ/{id}', [EmployController::class, 'delete']);
-    
+    Route::get('/news', [NewsController::class, 'index']);
+    Route::post('/news', [NewsController::class, 'store']);
+    Route::post('/news/{id}', [NewsController::class, 'update']);
+    Route::delete('/news/{id}', [NewsController::class, 'delete']);
+
     Route::post('/refresh', [PrivateController::class, 'refresh']);
 });

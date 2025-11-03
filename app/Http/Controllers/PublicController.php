@@ -26,7 +26,7 @@ class PublicController extends Controller
             'user.phoneNumber' => 'required|string|max:10|min:10',
             'establishment.nameEstate' => 'required|string|max:50|min:3',
             'establishment.sidewalk' => 'required|string|max:50|min:3',
-            'establishment.municipality' => 'required'
+            'establishment.municipality' => 'required|string'
         ]);
         
         if ($validator->fails()) {
@@ -148,7 +148,6 @@ class PublicController extends Controller
             return response()->json([
                 'message' => 'Inicio de sesión exitoso',
                 'access_token' => $token,
-                'token_type' => 'bearer',
                 'expires_in' => auth()->factory()->getTTL() * 60,
                 'email' => $user->email,
                 'role' => $user->role

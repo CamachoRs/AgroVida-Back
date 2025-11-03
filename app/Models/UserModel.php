@@ -32,7 +32,12 @@ class UserModel extends Authenticatable implements JWTSubject
 
     public function establishment()
     {
-        return $this->belongsTo(EstablishmentModel::class);
+        return $this->belongsTo(EstablishmentModel::class, 'establishmentId');
+    }
+
+    public function news()
+    {
+        return $this->hasMany(NewsModel::class, 'userId');
     }
 
     public function getJWTIdentifier()
@@ -42,10 +47,7 @@ class UserModel extends Authenticatable implements JWTSubject
 
     public function getJWTCustomClaims()
     {
-        return [
-            'role' => $this->role,
-            'establishment' => $this->establishmentId
-        ];
+        return [];
     }
 
     public function setPasswordAttribute($value)

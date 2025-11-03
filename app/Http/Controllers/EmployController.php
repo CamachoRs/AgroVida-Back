@@ -14,10 +14,10 @@ class EmployController extends Controller
     public function index()
     {
         try {
-            $payLoad = JWTAuth::parseToken()->getPayload();
-            $establishmentId = $payLoad->get('establishment');
-            $users = UserModel::where('establishmentId', $establishmentId)
-                ->where('role', "empleado")
+            $payLoad = JWTAuth::parseToken()->authenticate();
+            $users = UserModel::where('establishmentId', $payLoad->establishmentId)
+                ->whereIn('role', ['empleado', 'encargado'])
+                ->select('id', 'nameUser', 'email', 'phoneNumber', 'role', 'status', 'created_at')
                 ->get();
             
             if($users->isEmpty()){
@@ -58,11 +58,16 @@ class EmployController extends Controller
 
         DB::beginTransaction();
         try {
+            $payLoad = JWTAuth::parseToken()->authenticate();
             $userData = $request->input('user');
-            $payLoad = JWTAuth::parseToken()->getPayload();
-            $establishmentId = $payLoad->get('establishment');
+            $userExists = UserModel::where('email', $userData['email'])->first();
+            if($userExists){
+                return response()->json([
+                    'message' => '¡Ups! Parece que ya hay una cuenta registrada con ese correo'
+                ], 400);
+            };
             UserModel::create([
-                'establishmentId' => $establishmentId,
+                'establishmentId' => $payLoad->establishmentId,
                 'nameUser' => $userData['nameUser'],
                 'email' => $userData['email'],
                 'password' => $userData['password'],

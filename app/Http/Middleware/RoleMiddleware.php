@@ -20,8 +20,8 @@ class RoleMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         try {
-            $payLoad = JWTAuth::parseToken()->getPayload();
-            $userRole = $payLoad->get('role');
+            $payLoad = JWTAuth::parseToken()->authenticate();
+            $userRole = $payLoad->role;
             if ($userRole !== 'dueño') {
                 return response()->json([
                     'message' => 'Acceso denegado. No tienes permisos para acceder a este recurso.'

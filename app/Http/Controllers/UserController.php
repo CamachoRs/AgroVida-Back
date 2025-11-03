@@ -13,24 +13,16 @@ class UserController extends Controller
 {
     public function show(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'email' => 'required|email'
-        ]);
-
-        if($validator->fails()){
-            return response()->json([
-                'message' => 'Algunos de los datos proporcionados son incorrectos. Por favor, verifica los campos y vuelve a intentarlo',
-                'errors' => $validator->errors()
-            ], 422);
-        };
-
         try {
-            $email = $request->input('email');
-            $user = UserModel::where('email', $email)
+            $payLoad = JWTAuth::parseToken()->authenticate();
+            $email = $request->input('user.email');
+            $user = UserModel::where('id', $payLoad->id)
                 ->where('status', true)
+                ->select('nameUser', 'email', 'phoneNumber', 'role', 'created_at', 'establishmentId')
                 ->first();
             
             $establishment = EstablishmentModel::where('id', $user->establishmentId)
+                ->select('nameEstate', 'sidewalk', 'municipality')
                 ->first();
             
             return response()->json([
@@ -67,16 +59,15 @@ class UserController extends Controller
 
         DB::beginTransaction();
         try {
-            $payLoad = JWTAuth::parseToken()->getPayload();
-            $establishmentId = $payLoad->get('establishment');
-            $establishmentData = EstablishmentModel::where('id', $establishmentId)
+            $payLoad = JWTAuth::parseToken()->authenticate();
+            $establishmentData = EstablishmentModel::where('id', $payLoad->establishmentId)
                 ->first();
 
             $establishment = $request->input('establishment');
             $establishmentData->fill($establishment);
             $establishmentData->save();
             $user = $request->input('user');
-            $userData = UserModel::where('email', $user['email'])
+            $userData = UserModel::where('id', $payLoad->id)
                 ->where('status', true)
                 ->first();
 
@@ -84,8 +75,7 @@ class UserController extends Controller
             $userData->save();
             DB::commit();
             return response()->json([
-                'message' => '¡Todo listo! Ha sido actualizada correctamente la información',
-                'email' => $userData->email
+                'message' => '¡Todo listo! Ha sido actualizada correctamente la información'
             ], 200);
         } catch (\Throwable $th) {
             DB::rollBack();

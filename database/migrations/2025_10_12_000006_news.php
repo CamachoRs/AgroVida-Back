@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventories', function (Blueprint $table) {
+        Schema::create('news', function (Blueprint $table) {
             $table->id();
             $table->foreignId('establishmentId')->constrained('establishments')->onDelete('cascade');
-            $table->foreignId('categoryId')->constrained('productCategories');
-            $table->string('nameItem', 50);
-            $table->integer('quantity');
-            $table->string('unitMeasurement', 50);
-            $table->timestamp('entryDate');
-            $table->timestamp('expiryDate')->nullable();
-            $table->string('supplierName', 50);
+            $table->foreignId('userId')->constrained('users')->onDelete('cascade');
+            $table->string('title', 100);
+            $table->text('description', 200);
+            $table->string('image');
+            $table->boolean('status')->default(false);
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventories');
+        Schema::dropIfExists('news');
     }
 };

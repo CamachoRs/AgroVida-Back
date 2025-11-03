@@ -26,11 +26,11 @@ class InventoryModel extends Model
 
     public function establishment()
     {
-        return $this->belongsTo(EstablishmentModel::class);
+        return $this->belongsTo(EstablishmentModel::class, 'establishmentId');
     }
 
     public function category()
     {
-        return $this->belongsTo(CategoryModel::class, 'categoryId');
+        return $this->belongsTo(ProductCategoryModel::class, 'categoryId');
     }
 }

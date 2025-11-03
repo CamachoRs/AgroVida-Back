@@ -14,13 +14,11 @@ class InventoryController extends Controller
     public function index()
     {
         try {
-            $payLoad = JWTAuth::parseToken()->getPayload();
-            $establishmentId = $payLoad->get('establishment');
-            $inventory = InventoryModel::select('id', 'nameItem', 'quantity', 'unitMeasurement', 'entryDate', 'expiryDate', 'supplierName', 'categoryId')
-                ->with(['category' => function ($query) {
-                    $query->select('id', 'nameCategory', 'description')->where('status', true);
-                }])
-                ->where('establishmentId', $establishmentId)
+            $payLoad = JWTAuth::parseToken()->authenticate();
+            $inventory = DB::table('inventories')
+                ->join('productCategories', 'inventories.categoryId', '=', 'productCategories.id')
+                ->where('inventories.establishmentId', $payLoad->establishmentId)
+                ->select('inventories.id', 'inventories.nameItem', 'inventories.quantity', 'inventories.unitMeasurement', 'inventories.entryDate', 'inventories.expiryDate', 'inventories.supplierName', 'inventories.categoryId', 'productCategories.name')
                 ->get();
             
             if($inventory->isEmpty()){
@@ -49,7 +47,7 @@ class InventoryController extends Controller
             'inventory.unitMeasurement' => 'required|string',
             'inventory.expiryDate' => 'required|date',
             'inventory.supplierName' => 'required|string|min:3|max:50',
-            'inventory.categoryId' => 'required|integer|exists:categories,id',
+            'inventory.categoryId' => 'required|integer|exists:productCategories,id',
         ]);
 
         if($validator->fails()){
@@ -61,11 +59,10 @@ class InventoryController extends Controller
 
         DB::beginTransaction();
         try {
-            $payLoad = JWTAuth::parseToken()->getPayload();
-            $establishmentId = $payLoad->get('establishment');
+            $payLoad = JWTAuth::parseToken()->authenticate();
             $inventoryData = $request->input('inventory');
             InventoryModel::create([
-                'establishmentId' => $establishmentId,
+                'establishmentId' => $payLoad->establishmentId,
                 'categoryId' => $inventoryData['categoryId'],
                 'nameItem' => $inventoryData['nameItem'],
                 'quantity' => $inventoryData['quantity'],
@@ -83,8 +80,7 @@ class InventoryController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Hubo un error al procesar la solicitud',
-                'error' => $th->getMessage(),
-                'prueba'=>$establishmentId
+                'error' => $th->getMessage()
             ], 500);
         }
     }
@@ -92,13 +88,12 @@ class InventoryController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'inventory.id' => 'required|numeric',
             'inventory.nameItem' => 'required|string|min:3|max:50',
             'inventory.quantity' => 'required|integer',
             'inventory.unitMeasurement' => 'required|string',
             'inventory.expiryDate' => 'required|date',
             'inventory.supplierName' => 'required|string|min:3|max:50',
-            'inventory.categoryId' => 'required|integer|exists:categories,id',
+            'inventory.categoryId' => 'required|integer|exists:productCategories,id',
         ]);
 
         if($validator->fails()){
@@ -110,14 +105,13 @@ class InventoryController extends Controller
         
         DB::beginTransaction();
         try {
+            $payLoad = JWTAuth::parseToken()->authenticate();
             $inventoryData = $request->input('inventory');
-            $payLoad = JWTAuth::parseToken()->getPayload();
-            $establishmentId = $payLoad->get('establishment');
             $updateInventory = InventoryModel::where('id', $id)
                 ->first();
                 
             $updateInventory->update([
-                'establishmentId' => $establishmentId,
+                'establishmentId' => $payLoad->establishmentId,
                 'categoryId' => $inventoryData['categoryId'],
                 'nameItem' => $inventoryData['nameItem'],
                 'quantity' => $inventoryData['quantity'],

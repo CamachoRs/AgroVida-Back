@@ -20,11 +20,11 @@ class EstablishmentModel extends Model
 
     public function user()
     {
-        return $this->hasMany(UserModel::class);
+        return $this->hasMany(UserModel::class, 'establishmentId');
     }
 
     public function inventory()
     {
-        return $this->hasMany(InventoryModel::class);
+        return $this->hasMany(InventoryModel::class, 'establishmentId');
     }
 }
