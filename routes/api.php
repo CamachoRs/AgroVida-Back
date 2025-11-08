@@ -9,6 +9,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmployController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\AnimalController;
+use App\Http\Controllers\MedicalReviewController;
 use App\Http\Middleware\RoleMiddleware;
 
 Route::prefix('')->group(function () {
@@ -40,6 +42,14 @@ Route::group([
     Route::post('/news', [NewsController::class, 'store']);
     Route::post('/news/{id}', [NewsController::class, 'update']);
     Route::delete('/news/{id}', [NewsController::class, 'delete']);
-
+    Route::get('/animals', [AnimalController::class, 'index']);
+    Route::post('/animals', [AnimalController::class, 'store']);
+    Route::post('/animals/{id}', [AnimalController::class, 'update']);
+    Route::delete('/animals/{id}', [AnimalController::class, 'delete']);
+    
+    Route::get('/medical/{id}', [MedicalReviewController::class, 'show']);
+    Route::post('/medical', [MedicalReviewController::class, 'store']);
+    Route::post('/medical/{id}', [MedicalReviewController::class, 'update']);
+    Route::get('medical-reviews/{id}/download', [MedicalReviewController::class, 'downloadFile']);
     Route::post('/refresh', [PrivateController::class, 'refresh']);
 });

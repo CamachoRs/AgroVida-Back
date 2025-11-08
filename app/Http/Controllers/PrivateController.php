@@ -35,23 +35,23 @@ class PrivateController extends Controller
     }
 
     public function refresh()
-        {
-            try {
-                $newToken = auth()->refresh();
-                return response()->json([
-                    'access_token' => $newToken,
-                    'token_type' => 'bearer',
-                    'expires_in' => auth()->factory()->getTTL() * 60
-                ], 200);
-            } catch (TokenBlacklistedException $e) {
-                return response()->json([
-                    'message' => 'El token ha sido revocado. Por favor inicia sesión nuevamente'
-                ], 401);
-                
-            } catch (JWTException $e) {
-                return response()->json([
-                    'message' => 'No se proporcionó un token o hubo un error al procesarlo'
-                ], 500);
-            }
+    {
+        try {
+            $newToken = auth()->refresh();
+            return response()->json([
+                'access_token' => $newToken,
+                'token_type' => 'bearer',
+                'expires_in' => auth()->factory()->getTTL() * 60
+            ], 200);
+        } catch (TokenBlacklistedException $e) {
+            return response()->json([
+                'message' => 'El token ha sido revocado. Por favor inicia sesión nuevamente'
+            ], 401);
+            
+        } catch (JWTException $e) {
+            return response()->json([
+                'message' => 'No se proporcionó un token o hubo un error al procesarlo'
+            ], 500);
         }
+    }
 }

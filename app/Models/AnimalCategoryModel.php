@@ -23,4 +23,9 @@ class AnimalCategoryModel extends Model
     {
         return $this->belongsToMany(NewsModel::class, 'newsAnimalCategories', 'categoryAnimalId', 'newId');
     }
+
+    public function animals()
+    {
+        return $this->hasMany(AnimalModel::class, 'categoryId');
+    }
 }

@@ -27,4 +27,9 @@ class EstablishmentModel extends Model
     {
         return $this->hasMany(InventoryModel::class, 'establishmentId');
     }
+
+    public function animals()
+    {
+        return $this->hasMany(AnimalModel::class, 'establishmentId');
+    }
 }

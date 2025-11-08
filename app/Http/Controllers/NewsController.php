@@ -51,7 +51,7 @@ class NewsController extends Controller
             'new.title' => 'required|string|min:5|max:100',
             'new.description' => 'required|string|min:10',
             'new.categoryAnimal' => 'required|string',
-            'new.image' => 'sometimes|image'
+            'new.image' => 'sometimes|image|max:2048'
         ]);
 
         if($validator->fails()){
