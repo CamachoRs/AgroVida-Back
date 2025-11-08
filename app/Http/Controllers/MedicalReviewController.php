@@ -21,7 +21,7 @@ class MedicalReviewController extends Controller
             
                 if($medicalReviews->isEmpty()){
                     return response()->json([
-                        'message' => 'No se encontró información médica para este establecimiento'
+                        'message' => 'No se encontró información médica para este animal'
                     ], 404);
                 };
 

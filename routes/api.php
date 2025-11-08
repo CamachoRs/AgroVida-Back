@@ -46,10 +46,10 @@ Route::group([
     Route::post('/animals', [AnimalController::class, 'store']);
     Route::post('/animals/{id}', [AnimalController::class, 'update']);
     Route::delete('/animals/{id}', [AnimalController::class, 'delete']);
-    
     Route::get('/medical/{id}', [MedicalReviewController::class, 'show']);
     Route::post('/medical', [MedicalReviewController::class, 'store']);
     Route::post('/medical/{id}', [MedicalReviewController::class, 'update']);
     Route::get('medical-reviews/{id}/download', [MedicalReviewController::class, 'downloadFile']);
+
     Route::post('/refresh', [PrivateController::class, 'refresh']);
 });

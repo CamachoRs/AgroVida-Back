@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('observations')->nullable();
             $table->string('reviewerName', 50);
             $table->string('medicationName', 100)->nullable();
-            $table->string('dose', 8, 2)->nullable();
+            $table->string('dose', 50)->nullable();
             $table->enum('administrationRoute', ['Oral', 'Inyectable', 'Tópico', 'Intravenoso'])->nullable();
             $table->string('file')->nullable();
             $table->timestamps();
