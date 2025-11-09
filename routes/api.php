@@ -56,5 +56,6 @@ Route::group([
     Route::post('/tasks', [TasksController::class, 'store']);
     Route::put('/tasks/{id}', [TasksController::class, 'update']);
     Route::delete('/tasks/{id}', [TasksController::class, 'delete']);
+    Route::post('/tasks/{id}', [TasksController::class, 'resolve']);
     Route::post('/refresh', [PrivateController::class, 'refresh']);
 });
