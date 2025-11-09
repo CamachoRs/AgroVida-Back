@@ -220,8 +220,8 @@ class TasksController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'task.descriptionR' => 'sometimes|string|min:10',
-            'task.fileR' => 'sometimes|string',
-            'task.resolvedAt' => 'sometimes|date',
+            'task.imageR' => 'sometimes|string',
+            'task.resolvedAt' => 'required|date',
         ]);
 
         if ($validator->fails()) {
@@ -237,10 +237,10 @@ class TasksController extends Controller
             $task = TaskModel::findOrFail($id);
             $task->fill($taskData);
 
-            if ($request->hasFile('task.fileR')) {
-                $fileName = Str::uuid() . '.' . $request->file('task.fileR')->getClientOriginalExtension();
-                $filePath = $request->file('task.fileR')->storeAs('tasks', $fileName, 'public');
-                $task->FileR = $filePath;
+            if ($request->hasFile('task.imageR')) {
+                $imageName = Str::uuid() . '.' . $request->file('task.imageR')->getClientOriginalExtension();
+                $imagePath = $request->file('task.imageR')->storeAs('img/tasks', $imageName, 'public');
+                $task->imageR = $imagePath;
             }
 
             $task->save();

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignId('inventoryId')->constrained('inventories')->nullOnDelete();
             $table->integer('itemQuantity')->nullable();
             $table->text('descriptionR')->nullable();
-            $table->string('fileR')->nullable();
+            $table->string('imageR')->nullable();
             $table->date('resolvedAt')->nullable();
             $table->timestamps();
         });

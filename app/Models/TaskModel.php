@@ -23,7 +23,7 @@ class TaskModel extends Model
         'inventoryId',
         'itemQuantity',
         'descriptionR',
-        'FileR',
+        'imageR',
         'resolvedAt'
     ];
 
