@@ -33,4 +33,9 @@ class InventoryModel extends Model
     {
         return $this->belongsTo(ProductCategoryModel::class, 'categoryId');
     }
+
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(TaskModel::class, 'inventoryId');
+    }
 }

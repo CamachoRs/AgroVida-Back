@@ -120,7 +120,7 @@ class MedicalReviewController extends Controller
 
             if($request->hasFile('medical.file')){
                 $fileName = Str::uuid() . '.' . $request->file('medical.file')->getClientOriginalExtension();
-                $filePath = $request->file('medical.file')->storeAs('img/medical', $fileName, 'public');
+                $filePath = $request->file('medical.file')->storeAs('medical', $fileName, 'public');
                 $medical->file = $filePath;
             };
 

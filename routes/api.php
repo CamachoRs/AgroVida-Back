@@ -11,6 +11,7 @@ use App\Http\Controllers\EmployController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\MedicalReviewController;
+use App\Http\Controllers\TasksController;
 use App\Http\Middleware\RoleMiddleware;
 
 Route::prefix('')->group(function () {
@@ -51,5 +52,9 @@ Route::group([
     Route::post('/medical/{id}', [MedicalReviewController::class, 'update']);
     Route::get('medical-reviews/{id}/download', [MedicalReviewController::class, 'downloadFile']);
 
+    Route::get('/tasks', [TasksController::class, 'index']);
+    Route::post('/tasks', [TasksController::class, 'store']);
+    Route::put('/tasks/{id}', [TasksController::class, 'update']);
+    Route::delete('/tasks/{id}', [TasksController::class, 'delete']);
     Route::post('/refresh', [PrivateController::class, 'refresh']);
 });

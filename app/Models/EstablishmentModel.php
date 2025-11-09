@@ -32,4 +32,9 @@ class EstablishmentModel extends Model
     {
         return $this->hasMany(AnimalModel::class, 'establishmentId');
     }
+
+    public function task(): HasMany
+    {
+        return $this->hasMany(TaskModel::class, 'establishmentId');
+    }
 }

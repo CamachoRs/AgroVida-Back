@@ -40,4 +40,9 @@ class AnimalModel extends Model
     {
         return $this->hasMany(MedicalReview::class, 'animalId');
     }
+
+    public function task(): BelongsToMany
+    {
+        return $this->belongsToMany(TaskModel::class, 'animalTask', 'animalId', 'taskId');
+    }
 }

@@ -15,7 +15,6 @@ class UserController extends Controller
     {
         try {
             $payLoad = JWTAuth::parseToken()->authenticate();
-            $email = $request->input('user.email');
             $user = UserModel::where('id', $payLoad->id)
                 ->where('status', true)
                 ->select('nameUser', 'email', 'phoneNumber', 'role', 'created_at', 'establishmentId')

@@ -40,6 +40,11 @@ class UserModel extends Authenticatable implements JWTSubject
         return $this->hasMany(NewsModel::class, 'userId');
     }
 
+    public function task(): HasMany
+    {
+        return $this->hasMany(TaskModel::class, 'userId');
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
