@@ -51,11 +51,13 @@ Route::group([
     Route::post('/medical', [MedicalReviewController::class, 'store']);
     Route::post('/medical/{id}', [MedicalReviewController::class, 'update']);
     Route::get('medical-reviews/{id}/download', [MedicalReviewController::class, 'downloadFile']);
-
+    Route::get('/users', [UserController::class, 'index']);
     Route::get('/tasks', [TasksController::class, 'index']);
     Route::post('/tasks', [TasksController::class, 'store']);
     Route::put('/tasks/{id}', [TasksController::class, 'update']);
     Route::delete('/tasks/{id}', [TasksController::class, 'delete']);
     Route::post('/tasks/{id}', [TasksController::class, 'resolve']);
+    Route::get('/tasks/export', [TasksController::class, 'export']);
+    
     Route::post('/refresh', [PrivateController::class, 'refresh']);
 });

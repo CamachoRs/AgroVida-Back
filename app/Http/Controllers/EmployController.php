@@ -27,8 +27,8 @@ class EmployController extends Controller
             };
 
             return response()->json([
-                'message'=>'Usuarios recuperados exitosamente',
-                'data'=>$users
+                'message' => 'Usuarios recuperados exitosamente',
+                'data' => $users
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
@@ -44,7 +44,7 @@ class EmployController extends Controller
             'user.nameUser' => 'required|string|max:50|min:3',
             'user.email' => 'required|email',
             'user.password' => 'required|string|min:8',
-            'user.phoneNumber' => 'required|string|max:10|min:10',
+            'user.phoneNumber' => 'required|string|max:10|min:10|unique:users,phoneNumber',
             'user.status' => 'required|boolean',
             'user.role' => 'required|in:dueño,empleado,encargado'
         ]);
@@ -127,7 +127,8 @@ class EmployController extends Controller
         }
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         DB::beginTransaction();
         try {
             $user = UserModel::where('id',$id);

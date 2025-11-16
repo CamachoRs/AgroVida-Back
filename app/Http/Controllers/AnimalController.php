@@ -14,8 +14,10 @@ class AnimalController extends Controller
     public function index()
     {
         try {
+            $payLoad = JWTAuth::parseToken()->authenticate();
             $animals = AnimalModel::join('animalCategories', 'animals.categoryId', '=', 'animalCategories.id')
                 ->where('animals.status', true)
+                ->where('animals.establishmentId', $payLoad->establishmentId)
                 ->select('animals.id', 'animals.name', 'animals.categoryId', 'animalCategories.name as categoryName', 'animals.sex', 'animals.healthStatus', 'animals.ageRange', 'animals.weight', 'animals.observations', 'animals.image', 'animals.created_at')
                 ->get();
 

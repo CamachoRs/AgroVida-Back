@@ -11,7 +11,34 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-    public function show(Request $request)
+    public function index()
+    {
+        try {
+            $payLoad = JWTAuth::parseToken()->authenticate();
+            $users = UserModel::where('establishmentId', $payLoad->establishmentId)
+                ->where('status', true)
+                ->select('id', 'nameUser')
+                ->get();
+
+            if($users->isEmpty()){
+                return response()->json([
+                    'message' => 'No se encontraron usuarios para este establecimiento'
+                ], 404);
+            };
+
+            return response()->json([
+                'message' => 'Usuarios recuperados exitosamente',
+                'data' => $users
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Hubo un error al procesar la solicitud',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function show()
     {
         try {
             $payLoad = JWTAuth::parseToken()->authenticate();

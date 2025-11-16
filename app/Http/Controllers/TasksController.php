@@ -9,6 +9,8 @@ use App\Models\InventoryModel;
 use App\Models\AnimalModel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class TasksController extends Controller
 {
@@ -21,9 +23,16 @@ class TasksController extends Controller
                 ->leftJoin('animalTask as at', 'at.taskId', '=', 'tasks.id')
                 ->leftJoin('animals as a', 'a.id', '=', 'at.animalId')
                 ->where('tasks.userId', $payLoad->id)
+                ->where('tasks.status', false)
                 ->select('tasks.*', 'u.nameUser as userName', 'i.nameItem as inventoryName', DB::raw('STRING_AGG(a.name::text, \', \') as animalNamesList'), DB::raw('STRING_AGG(a.id::text, \', \') as animalIdsList'))
                 ->groupBy('tasks.id', 'u.nameUser', 'i.nameItem')
                 ->get();
+
+            if($tasks->isEmpty()){
+                return response()->json([
+                    'message' => 'No se encontraron tareas para este usuario'
+                ], 404);
+            };
 
             return response()->json([
                 'message' => 'Tareas recuperadas exitosamente',
@@ -220,8 +229,8 @@ class TasksController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'task.descriptionR' => 'sometimes|string|min:10',
-            'task.imageR' => 'sometimes|string',
-            'task.resolvedAt' => 'required|date',
+            'task.imageR' => 'sometimes|image',
+            'task.resolvedAt' => 'required|date'
         ]);
 
         if ($validator->fails()) {
@@ -236,6 +245,7 @@ class TasksController extends Controller
             $taskData = $request->input('task');
             $task = TaskModel::findOrFail($id);
             $task->fill($taskData);
+            $task->status = true;
 
             if ($request->hasFile('task.imageR')) {
                 $imageName = Str::uuid() . '.' . $request->file('task.imageR')->getClientOriginalExtension();
@@ -246,7 +256,8 @@ class TasksController extends Controller
             $task->save();
             DB::commit();
             return response()->json([
-                'message' => 'Tarea marcada como completada.'
+                'message' => 'Tarea marcada como completada.',
+                'prueba' => $request->input('task')
             ], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -255,5 +266,63 @@ class TasksController extends Controller
                 'error' => $th->getMessage()
             ], 500);
         }
+    }
+
+    public function export()
+    {
+        $fileName = "tareas_grandes_" . now()->format('Ymd_His') . ".csv";
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+        ];
+
+        $csvHeaders = ['ID Tarea', 'Nombre Tarea', 'Urgencia Tarea', 'Fecha Limite Tarea', 'Descripción Tarea', 'Nombre Inventario', 'Cantidad Inventario', 'Unidad Medida Inventario', 'Fecha Ingreso Inventario', 'Fecha Expiración Inventario', 'Nombre Proveedor Inventario', 'Descripción Tarea Resuelta', 'Evidencia Tarea', 'Fecha Resuelta Tarea', 'Estado Tarea', 'Nombre Usuario', 'Correo Usuario', 'Teléfono Usuario', 'Estado Usuario', 'Rol Usuario', 'Nombre Animal', 'Género Animal', 'Estado Salud Animal', 'Rango Edad Animal', 'Peso Animal', 'Observación Animal', 'Fecha Creación Tarea'];
+        
+        return response()->streamDownload(function () use ($csvHeaders) {
+            $payLoad = JWTAuth::parseToken()->authenticate();
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, $csvHeaders, ';');
+            $query = TaskModel::join('users as u', 'u.id', '=', 'tasks.userId')
+                ->leftJoin('inventories as i', 'i.id', '=', 'tasks.inventoryId')
+                ->leftJoin('animalTask as at', 'at.taskId', '=', 'tasks.id')
+                ->leftJoin('animals as a', 'a.id', '=', 'at.animalId')
+                ->where('tasks.establishmentId', $payLoad->establishmentId)
+                ->where('a.status', true)
+                ->select('tasks.id', 'tasks.name as taskName', 'tasks.urgency', 'tasks.deadline', 'tasks.description', 'i.nameItem', 'tasks.itemQuantity', 'i.unitMeasurement', 'i.entryDate', 'i.expiryDate', 'i.supplierName', 'tasks.descriptionR', 'tasks.imageR', 'tasks.resolvedAt', 'tasks.status as taskStatus', 'u.nameUser', 'u.email', 'u.phoneNumber', 'u.status as userStatus', 'u.role', 'a.name as animalName', 'a.sex', 'a.healthStatus', 'a.ageRange', 'a.weight', 'a.observations', 'tasks.created_at');
+
+            foreach ($query->cursor() as $task) {
+                fputcsv($handle, [
+                    $task->id,
+                    $task->taskName,
+                    $task->urgency,
+                    $task->deadline,
+                    $task->description,
+                    $task->nameItem,
+                    $task->itemQuantity,
+                    $task->unitMeasurement,
+                    $task->entryDate,
+                    $task->expiryDate,
+                    $task->supplierName,
+                    $task->descriptionR,
+                    $task->imageR ? 'http://192.168.101.11:800' . $task->imageR : '',
+                    $task->resolvedAt,
+                    $task->taskStatus ? 'Resuelta' : 'Pendiente',
+                    $task->nameUser,
+                    $task->email,
+                    $task->phoneNumber,
+                    $task->userStatus ? 'Activo' : 'Inactivo',
+                    $task->role,
+                    $task->animalName,
+                    $task->sex,
+                    $task->healthStatus,
+                    $task->ageRange,
+                    $task->weight,
+                    $task->observations,
+                    $task->created_at
+                ], ';');
+            }
+            
+            fclose($handle);
+        }, $fileName, $headers);
     }
 }

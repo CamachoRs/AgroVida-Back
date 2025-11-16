@@ -24,6 +24,7 @@ return new class extends Migration
             $table->text('descriptionR')->nullable();
             $table->string('imageR')->nullable();
             $table->date('resolvedAt')->nullable();
+            $table->boolean('status')->default(false);
             $table->timestamps();
         });
     }
