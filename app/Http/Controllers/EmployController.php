@@ -77,7 +77,7 @@ class EmployController extends Controller
             ]);
             DB::commit();
             return response()->json([
-                'message' => '¡Todo listo! Revisa tu correo electrónico para activar tu cuenta y acceder a la finca'
+                'message' => '¡Todo listo! El usuario ha sido registrado correctamente'
             ], 201);
         } catch (\Throwable $th) {
             DB::rollBack();

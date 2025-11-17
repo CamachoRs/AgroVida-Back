@@ -21,7 +21,7 @@ class NewsController extends Controller
             $news = NewsModel::join('newsAnimalCategories', 'news.id', '=', 'newsAnimalCategories.newId')
             ->join('animalCategories as ca', 'ca.id', '=', 'newsAnimalCategories.categoryAnimalId')
             ->join('users as u', 'u.id', '=', 'news.userId')
-            ->where('news.establishmentId', $payLoad->establishmentId)
+            ->whereIn('news.establishmentId', [$payLoad->establishmentId, 1])
             ->where('news.status', true)
             ->select('news.id', 'news.title', 'news.description', 'u.nameUser', 'news.updated_at', 'news.image', DB::raw('string_agg(ca.name, \', \') as animals'))
             ->groupBy('news.id', 'news.title', 'news.description', 'u.nameUser', 'news.image')
@@ -124,8 +124,21 @@ class NewsController extends Controller
         DB::beginTransaction();
         try {
             $payLoad = JWTAuth::parseToken()->authenticate();
-            $newData = $request->input('new');
             $new = NewsModel::findOrFail($id);
+
+            if($new->userId == 1 && $payLoad->id != 1){
+                return response()->json([
+                    'message' => 'Lo sentimos, pero no se puede actualizar esta novedad'
+                ], 400);
+            };
+
+            if($payLoad->role == 'empleado' && $new->userId != $payLoad->id){
+                return response()->json([
+                    'message' => 'Lo sentimos, pero solo puedes actualizar las novedades que tengan tu usuario'
+                ], 403);
+            };
+
+            $newData = $request->input('new');
             $new->userId = $payLoad->id;
             $new->fill($newData);
             
@@ -172,9 +185,15 @@ class NewsController extends Controller
             $payLoad = JWTAuth::parseToken()->authenticate();
             $new = NewsModel::findOrFail($id);
 
-            if($new->userId != $payLoad->id){
+            if($new->userId == 1 && $payLoad->id != 1){
                 return response()->json([
-                    'message' => 'Lo sentimos, pero solo puedes eliminar las novedades que tú mismo hayas creado.'
+                    'message' => 'Lo sentimos, pero no se puede eliminar esta novedad'
+                ], 400);
+            };
+
+            if($payLoad->role == 'empleado' && $new->userId != $payLoad->id){
+                return response()->json([
+                    'message' => 'Lo sentimos, pero solo puedes eliminar las novedades que tengan tu usuario'
                 ], 403);
             };
 

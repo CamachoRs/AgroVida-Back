@@ -304,7 +304,7 @@ class TasksController extends Controller
                     $task->expiryDate,
                     $task->supplierName,
                     $task->descriptionR,
-                    $task->imageR ? 'http://192.168.101.11:800' . $task->imageR : '',
+                    $task->imageR ? 'http://192.168.101.5:800' . $task->imageR : '',
                     $task->resolvedAt,
                     $task->taskStatus ? 'Resuelta' : 'Pendiente',
                     $task->nameUser,

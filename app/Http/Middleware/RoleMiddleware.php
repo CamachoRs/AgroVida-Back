@@ -17,12 +17,12 @@ class RoleMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
         try {
             $payLoad = JWTAuth::parseToken()->authenticate();
             $userRole = $payLoad->role;
-            if ($userRole !== 'dueño') {
+            if (!in_array($userRole, $roles)) {
                 return response()->json([
                     'message' => 'Acceso denegado. No tienes permisos para acceder a este recurso.'
                 ], 403);

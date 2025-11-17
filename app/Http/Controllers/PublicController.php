@@ -149,7 +149,6 @@ class PublicController extends Controller
                 'message' => 'Inicio de sesión exitoso',
                 'access_token' => $token,
                 'expires_in' => auth()->factory()->getTTL() * 60,
-                'email' => $user->email,
                 'role' => $user->role
             ], 200);
         } catch (\Throwable $th) {
