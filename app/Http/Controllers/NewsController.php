@@ -132,12 +132,6 @@ class NewsController extends Controller
                 ], 400);
             };
 
-            if($payLoad->role == 'empleado' && $new->userId != $payLoad->id){
-                return response()->json([
-                    'message' => 'Lo sentimos, pero solo puedes actualizar las novedades que tengan tu usuario'
-                ], 403);
-            };
-
             $newData = $request->input('new');
             $new->userId = $payLoad->id;
             $new->fill($newData);
@@ -191,13 +185,7 @@ class NewsController extends Controller
                 ], 400);
             };
 
-            if($payLoad->role == 'empleado' && $new->userId != $payLoad->id){
-                return response()->json([
-                    'message' => 'Lo sentimos, pero solo puedes eliminar las novedades que tengan tu usuario'
-                ], 403);
-            };
-
-            $new->update(['status'=>false]);
+            $new->update(['status' => false]);
             DB::commit();
             return response()->json([
                 'message' => '¡Todo listo! La novedad ha sido eliminada correctamente'

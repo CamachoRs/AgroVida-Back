@@ -35,6 +35,15 @@ Route::group([
     Route::put('/inventory/{id}', [InventoryController::class, 'update']);
     Route::delete('/inventory/{id}', [InventoryController::class, 'delete']);
     Route::get('/categoryProduct', [CategoryController::class, 'indexProduct']);
+    Route::post('/categoryProduct', [CategoryController::class, 'storeProduct']);
+    Route::put('/categoryProduct/{id}', [CategoryController::class, 'updateProduct']);
+    Route::delete('/categoryProduct/{id}', [CategoryController::class, 'deleteProduct']);
+    Route::post('/categoryAnimal', [CategoryController::class, 'storeAnimal']);
+    Route::put('/categoryAnimal/{id}', [CategoryController::class, 'updateAnimal']);
+    Route::delete('/categoryAnimal/{id}', [CategoryController::class, 'deleteAnimal']);
+    Route::post('/news', [NewsController::class, 'store']);
+    Route::post('/news/{id}', [NewsController::class, 'update']);
+    Route::delete('/news/{id}', [NewsController::class, 'delete']);
     Route::post('/animals', [AnimalController::class, 'store']);
     Route::post('/animals/{id}', [AnimalController::class, 'update']);
     Route::delete('/animals/{id}', [AnimalController::class, 'delete']);
@@ -55,9 +64,6 @@ Route::group([
     Route::get('/profile', [UserController::class, 'show']);
     Route::put('/profile', [UserController::class, 'update']);
     Route::get('/news', [NewsController::class, 'index']);
-    Route::post('/news', [NewsController::class, 'store']);
-    Route::post('/news/{id}', [NewsController::class, 'update']);
-    Route::delete('/news/{id}', [NewsController::class, 'delete']);
     Route::get('/animals', [AnimalController::class, 'index']);
     Route::get('/medical/{id}', [MedicalReviewController::class, 'show']);
     Route::get('medical-reviews/{id}/download', [MedicalReviewController::class, 'downloadFile']);
@@ -66,6 +72,5 @@ Route::group([
     Route::get('/tasks', [TasksController::class, 'index']);
     Route::post('/tasks/{id}', [TasksController::class, 'resolve']);
     Route::put('/tasks/{id}', [TasksController::class, 'update']);
-
     Route::get('/refresh', [PrivateController::class, 'refresh']);
 });
